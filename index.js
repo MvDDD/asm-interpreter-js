@@ -1,16 +1,20 @@
-let fs = require("fs") // #include <fstream>
-let file = fs.readFileSync(process.argv[2])
+let fs = require("fs")
 
-file = file.replace("\t", " ").split("\n")
+let { register, strBIN } = require("./regs.js")
 
+let file = fs.readFileSync(process.argv[2], "utf-8")
+
+if (!file.trim().startsWith("format STR as RUN")) throw Error("invalid file")
+
+file = file.replace("\t", " ").split("\n").filter(l=>l.length > 2).map(a=>a.split(";")[0])
 
 let code = {}
 
 let func = ""
 file.forEach((line)=>{
     line = line.trim()
-    if (line.endsWidth(":")){
-        let func = line.slice(0, -1)
+    if (line.split("").pop() == ":"){
+        func = line
     } else {
         if (!code[func]){
             code[func] = []
@@ -23,7 +27,7 @@ function handle(line){
     while (line.includes("  ")){
         line = line.replace("  ", " ")
     }
-    let OP = line.split(" ")[0]
+    let op = line.split(" ")[0]
     line = line.split(" ")
     line.shift()
     line = line.join(" ")
@@ -32,4 +36,4 @@ function handle(line){
     return {op, args}
 }
 
-console.log(code)
+console.log(code.main)

@@ -1,3 +1,5 @@
+format STR as RUN
+
 main:
 	mov eax, -1
-	mcall
+	mcall -1 ;comment
